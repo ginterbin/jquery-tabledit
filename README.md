@@ -1,4 +1,4 @@
-# jQuery-Tabledit v2.0.0 (dev)
+# jQuery-Tabledit v2.0-beta.1 (dev)
 
 Inline editor for HTML tables compatible with Bootstrap.
 
