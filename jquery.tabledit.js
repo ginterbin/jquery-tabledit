@@ -2,13 +2,14 @@
  * Tabledit v1.2.3 (https://github.com/markcell/jQuery-Tabledit)
  * Copyright (c) 2015 Celso Marques
  * Licensed under MIT (https://github.com/markcell/jQuery-Tabledit/blob/master/LICENSE)
- Edited by ABCarnage
+ * Edited by ABCarnage
  */
 
 /**
  * @description Inline editor for HTML tables compatible with Bootstrap
- * @version 1.2.3
+ * @version 2.0-beta.1
  * @author Celso Marques
+ * @edited GInterbin
  */
 
 if (typeof jQuery === 'undefined') {
