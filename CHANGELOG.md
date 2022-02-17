@@ -1,5 +1,9 @@
-## v2.0.0 (dev) (2019/12/17)
-
+## v2.0.1 (dev) (2022/02/17)
+- восстановлена функция "delete": 
+- let confirmButton = $(".tabledit-confirm-button.active");
+        id = "id=" + confirmButton.parents("tr").attr(settings.rowIdentifier);
+- аттрибут .active не устанавливался для кнопки confirm при нажатии на кнопку delete и confirmButton === андефайнед
+- ## v2.0.0 (dev) (2019/12/17)
 -   BIG UPDATE
 -   'rowIdentifier' is now by default the element attribute 'data-id'
 -   'rowCounter' is can be used to display the number of the row
