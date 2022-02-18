@@ -25,7 +25,7 @@ Inline editor for HTML tables compatible with Bootstrap.
                         ...
                         <tbody>
                             @foreach ($models as $model)
-                            <tr  **data-id="{{ $invoice->id }}">
+                            <tr  **data-id="{{ $model->id }}">
                                 <td class="table-text">{{ $model->id }}</td>
                                 <td class="table-text">{{ $model->barcode }}</td>
                                 <td class="table-text">{{ $model->article }}</td>
