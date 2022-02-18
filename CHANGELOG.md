@@ -1,11 +1,11 @@
 - ## v2.0.3  (2022/02/18)
-- after adding via ajax new id reads and placed to 'data-id' prop and '.tabledit-span.tabledit-identifier' td.text()
-- removed data['message'] processing
+- after adding via ajax() local function new id reads and placed to 'data-id' prop and '.tabledit-span.tabledit-identifier' td.text()
+- removed data['message'] processing in ajax() local function
 - ## v2.0.1 (dev) (2022/02/17)
-- восстановлена функция "delete": 
-- let confirmButton = $(".tabledit-confirm-button.active");
+- function "delete" operability restored: 
+        let confirmButton = $(".tabledit-confirm-button.active");
         id = "id=" + confirmButton.parents("tr").attr(settings.rowIdentifier);
-- аттрибут .active не устанавливался для кнопки confirm при нажатии на кнопку delete и confirmButton === андефайнед
+        Attr .active was not setings for confirm button. And when pressing "delete" - confirmButton === undefined and in server requst was id === 'undefined'
 - ## v2.0.0 (dev) (2019/12/17)
 -   BIG UPDATE
 -   'rowIdentifier' is now by default the element attribute 'data-id'
