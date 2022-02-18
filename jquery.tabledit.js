@@ -7,9 +7,9 @@
 
 /**
  * @description Inline editor for HTML tables compatible with Bootstrap
- * @version 2.0-beta.1
+ * @version 2.0.1
  * @author Celso Marques
- * @edited GInterbin
+ * @edited Boris Mak (https://github.com/ginterbin/jquery-tabledit)
  */
 
 if (typeof jQuery === 'undefined') {
@@ -382,15 +382,12 @@ if (typeof jQuery === 'undefined') {
       submit: function (td) {
         // Send AJAX request to server.
         var ajaxResult = ajax(settings.buttons.add.action);
-        window.aResult = ajaxResult;
-
-        console.log('ajaxResult:', ajaxResult);
 
         if (ajaxResult === false) {
           Add.remove(td);
           return;
         }
-        /* ajaxResult !!! */
+
         $(td).each(function () {
           // Get input element.
           var $input = $(this).find('.tabledit-input');
@@ -403,14 +400,8 @@ if (typeof jQuery === 'undefined') {
           // Change to view mode.
           Mode.view(this);
         });
-
         // Set last edited column and row.
         $lastEditedRow = $(td).parent('tr');
-
-        // Set new id
-        if (window.aResult.responseJSON.id) {
-          $lastEditedRow.find('.tabledit-span.tabledit-identifier').text(ajaxResult.responseJSON.id);
-        }
       }
     };
 
@@ -458,7 +449,7 @@ if (typeof jQuery === 'undefined') {
           Edit.reset(this);
         });
         //  Remove "active" class in all confirm buttons.
-        $table.find('.tabledit-confirm-button').removeClass('active');        
+        $table.find('.tabledit-confirm-button').removeClass('active');
         // Add "active" class in delete button.
         $(td).find('.tabledit-delete-button').addClass('active');
         // Show confirm button.
@@ -509,7 +500,7 @@ if (typeof jQuery === 'undefined') {
         // id = id + "&";
       }
       var serialize = id + '&' + $table.find('.tabledit-input:not(.tabledit-identifier)').serialize() +
-        '&action=' + action + "&table=" + $table.attr("data-info-table") + '&message=true';
+        '&action=' + action + "&table=" + $table.attr("data-info-table");
 
       var result = settings.onAjax(action, serialize);
 
@@ -517,14 +508,18 @@ if (typeof jQuery === 'undefined') {
         return false;
       }
 
-      var jqXHR = $.post(settings.url, serialize, function (data, textStatus, jqXHR) {
-        if (data['message'] == 'confirmation') {
+      var jqXHR = $.post(settings.url, serialize,
+        function (data, textStatus, jqXHR) {
+          console.log('jqXHR:', jqXHR);
+          console.log('textStatus:', textStatus);
           if (action === settings.buttons.edit.action || action === settings.buttons.add.action) {
             $lastEditedRow.removeClass(settings.dangerClass).addClass(settings.successClass);
             $(settings.feedbackContainer).html("<div class='alert alert-success'><span>Confirmation</span></div>");
-            if (action === settings.buttons.add.action) {
-              $lastEditedRow.attr("data-id", data["id"]);
-              $(settings.feedbackContainer).html("<div class='alert alert-success'><span>Confirmation</span></div>");
+            if (action === settings.buttons.add.action && typeof jqXHR.responseJSON.id !== 'undefined') {
+              var newId = jqXHR.responseJSON.id;
+              // Set new id
+              $lastEditedRow.attr("data-id", newId);
+              $lastEditedRow.find('.tabledit-span.tabledit-identifier').text(newId);
             }
             setTimeout(function () {
               $lastEditedRow.removeClass(settings.successClass);
@@ -532,23 +527,9 @@ if (typeof jQuery === 'undefined') {
           } else if (action === settings.buttons.delete.action) {
             $(settings.feedbackContainer).html("<div class='alert alert-success'><span>Confirmation</span></div>");
           }
-        } else if (data['message'] == 'error' && action === settings.buttons.add.action) {
-          $lastEditedRow.addClass(settings.dangerClass);
-          $(settings.feedbackContainer).html("<div class='alert alert-danger'><span>Error</span></div>");
-          setTimeout(function () {
-            $lastEditedRow.fadeOut(1000, function () {
-              $(this).remove();
-            });
-          }, 2000);
-        } else if (data['message'] == 'error' && action === settings.buttons.edit.action) {
-          $lastEditedRow.addClass(settings.dangerClass);
-          $(settings.feedbackContainer).html("<div class='alert alert-danger'><span>Error</span></div>");
-        } else {
-          $(settings.feedbackContainer).html("<p>Something is wrong!</p>");
-          console.log("No confirmation or error in data.");
-        }
-        settings.onSuccess(data, textStatus, jqXHR);
-      }, 'json');
+
+          settings.onSuccess(data, textStatus, jqXHR);
+        }, 'json');
 
       jqXHR.fail(function (jqXHR, textStatus, errorThrown) {
         if (action === settings.buttons.delete.action) {
@@ -557,6 +538,14 @@ if (typeof jQuery === 'undefined') {
           $lastDeletedRow.find('.tabledit-toolbar .tabledit-restore-button').hide();
         } else if (action === settings.buttons.edit.action || action === settings.buttons.add.action) {
           $lastEditedRow.addClass(settings.dangerClass);
+          if (action === settings.buttons.add.action) {
+            $(settings.feedbackContainer).html("<div class='alert alert-danger'><span>Error</span></div>");
+            setTimeout(function () {
+              $lastEditedRow.fadeOut(1000, function () {
+                $(this).remove();
+              });
+            }, 2000);
+          }
         }
 
         settings.onFail(jqXHR, textStatus, errorThrown);
@@ -679,6 +668,7 @@ if (typeof jQuery === 'undefined') {
               var counter = parseInt(clone.find('.tabledit-span.tabledit-identifier').text());
               counter++;
               /* counter !!! */
+              counter = '';
               clone.find('.tabledit-span.tabledit-identifier').text(counter);
               clone.find('.tabledit-input.tabledit-identifier').val(counter);
 
