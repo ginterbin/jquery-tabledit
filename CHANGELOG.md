@@ -1,4 +1,7 @@
-## v2.0.1 (dev) (2022/02/17)
+- ## v2.0.3  (2022/02/18)
+- after adding via ajax new id reads and placed to 'data-id' prop and '.tabledit-span.tabledit-identifier' td.text()
+- removed data['message'] processing
+- ## v2.0.1 (dev) (2022/02/17)
 - восстановлена функция "delete": 
 - let confirmButton = $(".tabledit-confirm-button.active");
         id = "id=" + confirmButton.parents("tr").attr(settings.rowIdentifier);
