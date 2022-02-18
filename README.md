@@ -1,4 +1,4 @@
-# jQuery-Tabledit v2.0-beta.1 (dev)
+# jQuery-Tabledit v2.0.3
 
 Inline editor for HTML tables compatible with Bootstrap.
 
@@ -20,7 +20,10 @@ Inline editor for HTML tables compatible with Bootstrap.
 
 ## Examples
 
-<http://markcell.github.io/jquery-tabledit/#examples>
+                        <tbody>
+                            @foreach ($invoices as $invoice)
+                            <tr ## data-id="{{ $invoice->id }}" ##>
+                                <td class="table-text">{{ $invoice->id }}</td>
 
 ## Documentation
 
