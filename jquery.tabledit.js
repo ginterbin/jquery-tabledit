@@ -524,7 +524,7 @@ if (typeof jQuery === 'undefined') {
             $(settings.feedbackContainer).html("<div class='alert alert-success'><span>Confirmation</span></div>");
             if (action === settings.buttons.add.action && typeof jqXHR.responseJSON.id !== 'undefined') {
               var newId = jqXHR.responseJSON.id;
-              // Set new id
+              // Set new id !!! 
               $lastEditedRow.attr("data-id", newId);
               $lastEditedRow.find('.tabledit-span.tabledit-identifier').text(newId);
             }
@@ -636,7 +636,7 @@ if (typeof jQuery === 'undefined') {
 
     if (settings.addButton) {
       /**
-       * Activate edit mode on all columns.
+       * Activate add mode on add buttons.
        *
        * @param {object} event
        */
