@@ -1,15 +1,16 @@
 /*!
  * Tabledit v1.2.3 (https://github.com/markcell/jQuery-Tabledit)
  * Copyright (c) 2015 Celso Marques
+ * @description Inline editor for HTML tables compatible with Bootstrap
+ * @author Celso Marques
  * Licensed under MIT (https://github.com/markcell/jQuery-Tabledit/blob/master/LICENSE)
- * Edited by ABCarnage
+ * Edited by ABCarnage (https://github.com/ABCarnage/jquery-tabledit/tree/v2-dev)
  */
 
 /**
- * @description Inline editor for HTML tables compatible with Bootstrap
- * @version 2.0.1
- * @author Celso Marques
- * @edited Boris Mak (https://github.com/ginterbin/jquery-tabledit)
+ * @edited by Boris Mak (https://github.com/ginterbin/jquery-tabledit)
+ * Feb, 2022
+ * @version 2.0.3
  */
 
 if (typeof jQuery === 'undefined') {
@@ -37,15 +38,15 @@ if (typeof jQuery === 'undefined') {
       mutedClass: 'text-muted',
       eventType: 'click',
       feedbackContainer: "#feedback",
+      reverseOrderAdd: false,
       rowIdentifier: 'data-id',
-      rowCounter: "#",
       hideCounter: false,
       autoFocus: true,
       editButton: true,
       deleteButton: true,
       saveButton: true,
       restoreButton: true,
-      addButton: true,
+      addButton: false,
       buttons: {
         edit: {
           class: 'btn btn-sm btn-outline-secondary',
@@ -376,6 +377,12 @@ if (typeof jQuery === 'undefined') {
      * @type object
      */
     var Add = {
+      reset: function (td) {
+        if ($("button.tabledit-add-button").hasClass("active")) {
+          Add.remove(td);
+          $("button.tabledit-add-button").removeClass("active");
+        }
+      },
       remove: function (td) {
         $(td).parent('tr').remove();
       },
@@ -510,8 +517,8 @@ if (typeof jQuery === 'undefined') {
 
       var jqXHR = $.post(settings.url, serialize,
         function (data, textStatus, jqXHR) {
-          console.log('jqXHR:', jqXHR);
-          console.log('textStatus:', textStatus);
+          // console.log('jqXHR:', jqXHR);
+          // console.log('textStatus:', textStatus);
           if (action === settings.buttons.edit.action || action === settings.buttons.add.action) {
             $lastEditedRow.removeClass(settings.dangerClass).addClass(settings.successClass);
             $(settings.feedbackContainer).html("<div class='alert alert-success'><span>Confirmation</span></div>");
@@ -656,15 +663,18 @@ if (typeof jQuery === 'undefined') {
               //clone.appendTo(tableditTableName + " tbody");
               $(tableHead.find("th:not(.tabledit-toolbar-column)").get()).each(function () {
                 var cell = "<td></td>";
-                if ($(this).text() == settings.rowCounter) {
-
-                  cell = "<td>1</td>";
-                }
                 clone.append(cell);
               });
 
             } else {
-              var clone = $(tableditTableName + " tbody tr:last").clone();
+
+              if(settings.reverseOrderAdd) {
+                var rowSelect = " tbody tr:first";
+              } else {
+                var rowSelect = " tbody tr:last";
+              }
+  
+              var clone = $(tableditTableName + rowSelect).clone();
               var counter = parseInt(clone.find('.tabledit-span.tabledit-identifier').text());
               counter++;
               /* counter !!! */
@@ -676,7 +686,12 @@ if (typeof jQuery === 'undefined') {
               $(".tabledit-input:not(.tabledit-identifier)", clone).val("");;
             }
 
-            clone.appendTo(tableditTableName);
+            if(settings.reverseOrderAdd) {
+              clone.prependTo(tableditTableName);
+            } else {
+              clone.appendTo(tableditTableName);
+            }
+            
 
             if (emptyTable) {
               Draw.columns.identifier();
@@ -685,10 +700,10 @@ if (typeof jQuery === 'undefined') {
               emptyTable = false;
             }
 
-            $($(tableditTableName + " tbody tr:last").find('td.tabledit-view-mode').get().reverse()).each(function () {
+            $($(tableditTableName + rowSelect).find('td.tabledit-view-mode').get().reverse()).each(function () {
               Mode.add(this);
             });
-
+            // Set ADD button status
             $(tableditTableName + ' button.tabledit-add-button').addClass("active");
           }
           event.handled = true;
@@ -850,6 +865,7 @@ if (typeof jQuery === 'undefined') {
           Edit.submit($td);
           break;
         case 27: // Escape.
+          Add.reset($td);
           Edit.reset($td);
           Delete.reset($td);
           break;
