@@ -38,7 +38,7 @@ if (typeof jQuery === 'undefined') {
       mutedClass: 'text-muted',
       eventType: 'click',
       feedbackContainer: "#feedback",
-      reverseOrderAdd: false,
+      addRowBefore: false,
       rowIdentifier: 'data-id',
       hideCounter: false,
       autoFocus: true,
@@ -293,6 +293,7 @@ if (typeof jQuery === 'undefined') {
         $("button.tabledit-add-button").removeClass("active");
       },
       add: function (td) {
+        console.log(td);
         Delete.reset(td);
         // Get table row.
         var $tr = $(td).parent('tr');
@@ -655,54 +656,40 @@ if (typeof jQuery === 'undefined') {
             // Change to edit mode for all columns in reverse way.
 
             var tableditTableName = '#' + $table.attr('id');
-            if ($($(tableditTableName + " tbody tr:last").find('td.tabledit-view-mode')).length === 0) {
-              var emptyTable = true;
-              $(tableditTableName + " tbody").html("");
-              var tableHead = $(tableditTableName + " thead");
-              var clone = $(document.createElement('tr')).attr(settings.rowIdentifier, "");
-              //clone.appendTo(tableditTableName + " tbody");
-              $(tableHead.find("th:not(.tabledit-toolbar-column)").get()).each(function () {
-                var cell = "<td></td>";
-                clone.append(cell);
+
+            var tableHead = $(tableditTableName + " thead");
+            var clone = $("<tr></tr>").attr(settings.rowIdentifier, "");
+            var defaults = [];
+            if (typeof settings.columns.defaults !== 'undefined') {
+              settings.columns.defaults.forEach(function (item, index, array) {
+                defaults[item[0]] = item[1];
               });
-
-            } else {
-
-              if(settings.reverseOrderAdd) {
-                var rowSelect = " tbody tr:first";
-              } else {
-                var rowSelect = " tbody tr:last";
-              }
-  
-              var clone = $(tableditTableName + rowSelect).clone();
-              var counter = parseInt(clone.find('.tabledit-span.tabledit-identifier').text());
-              counter++;
-              /* counter !!! */
-              counter = '';
-              clone.find('.tabledit-span.tabledit-identifier').text(counter);
-              clone.find('.tabledit-input.tabledit-identifier').val(counter);
-
-              $(".tabledit-span:not(.tabledit-identifier)", clone).text("");
-              $(".tabledit-input:not(.tabledit-identifier)", clone).val("");;
             }
+            tableHead.find("th:not(.tabledit-toolbar-column)").each(function (index) {
+              var val = (typeof defaults[index] !== 'undefined') ? defaults[index] : "";
+              var cell = $("<td>" + val + "</td>");
+              clone.append(cell);
+            });
 
-            if(settings.reverseOrderAdd) {
+            if (settings.addRowBefore) {
               clone.prependTo(tableditTableName);
             } else {
               clone.appendTo(tableditTableName);
             }
-            
 
-            if (emptyTable) {
-              Draw.columns.identifier();
-              Draw.columns.editable();
-              Draw.columns.toolbar();
-              emptyTable = false;
-            }
+            Draw.columns.identifier();
+            Draw.columns.editable();
+            Draw.columns.toolbar();
 
-            $($(tableditTableName + rowSelect).find('td.tabledit-view-mode').get().reverse()).each(function () {
+            var tds = clone.find('td.tabledit-view-mode');
+            tds.each(function () {
               Mode.add(this);
             });
+
+            if (settings.autoFocus) {
+              $('input', tds.first()).focus();
+            }
+
             // Set ADD button status
             $(tableditTableName + ' button.tabledit-add-button').addClass("active");
           }

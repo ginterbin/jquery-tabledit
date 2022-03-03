@@ -9,6 +9,7 @@ function loadTabledit() {
     addButton: true,
     editButton: true,
     restoreButton: false,
+    addRowBefore: true,
     feedbackContainer: "#feedback1",
     columns: {
       identifier: [0, '#'],
@@ -16,6 +17,10 @@ function loadTabledit() {
         [1, 'nickname'],
         [2, 'firstname'],
         [3, 'lastname']
+      ],
+      defaults: [
+        [2, 'my name'],
+        [4, 'my name'],
       ]
     },
     onDraw: function() {
